@@ -4,6 +4,16 @@ import { Boot } from "@/components/boot";
 import { Cursor } from "@/components/cursor";
 import { Scramble } from "@/components/scramble";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  Mail,
+  Github,
+  Linkedin,
+  Instagram,
+  Check,
+  Copy,
+  ExternalLink,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,6 +27,32 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+/* --------------------------------- TYPES ---------------------------------- */
+interface Project {
+  name: string;
+  tag: string;
+  desc: string;
+  tech: string[];
+  signal: number;
+  enc: string;
+  nodes: number;
+  span: string;
+  liveEnabled: boolean;
+  liveUrl?: string;
+  sourceEnabled: boolean;
+  sourceUrl?: string;
+  image?: string;
+}
+
+interface SocialLink {
+  key: string;
+  label: string;
+  url: string;
+  icon: LucideIcon;
+  isEmail?: boolean;
+}
+
+/* --------------------------------- CONFIG --------------------------------- */
 const NAV = [
   { id: "intro", label: "intro" },
   { id: "experiences", label: "experiences" },
@@ -24,6 +60,93 @@ const NAV = [
   { id: "contact", label: "contact" },
 ];
 
+const PROJECTS: Project[] = [
+  {
+    name: "CLYRA",
+    tag: "AI PLATFORM // V1.0",
+    desc: "Interview preparation platform simulating aptitude tests, coding rounds, technical interviews, HR interviews, and viva examinations for diploma students.",
+    tech: ["react", "python", "ai", "supabase", "LLAMA", "next.js"],
+    signal: 9,
+    enc: "OWNER VERIFIED",
+    nodes: 500,
+    span: "md:col-span-2",
+    liveEnabled: false,
+    sourceEnabled: false,
+    image: undefined,
+  },
+  {
+    name: "STUDENT DASHBOARD",
+    tag: "CAMPUS HUB // V1.0",
+    desc: "Centralized student platform bringing notes, resources, and academic services into a single mobile application for easier access across campus.",
+    tech: ["flutter", "php", "mysql"],
+    signal: 8,
+    enc: "AUTH VERIFIED",
+    nodes: 1500,
+    span: "",
+    liveEnabled: false,
+    sourceEnabled: false,
+    image: undefined,
+  },
+  {
+    name: "DIGITAL_CLOCK \n SCREENSAVER",
+    tag: "TIME NODE // V1.0",
+    desc: "Terminal-inspired fullscreen clock system built for continuous desktop operation. Displays live time with a minimal cyberpunk aesthetic and zero interface clutter.",
+    tech: ["python", "tkinter"],
+    signal: 7,
+    enc: "SYNCED",
+    nodes: 24,
+    span: "",
+    liveEnabled: false,
+    sourceEnabled: true,
+    sourceUrl: "https://github.com/real-arnel-roy",
+    image: undefined,
+  },
+  {
+    name: "VPOES",
+    tag: "SECURE EXAM SYSTEM // V1.0",
+    desc: "Mobile examination platform for internal tests and mock exams with authentication, result management, review systems, and anti-app-switch protection.",
+    tech: ["flutter", "php", "mysql"],
+    signal: 10,
+    enc: "SESSION LOCK",
+    nodes: 1500,
+    span: "md:col-span-2",
+    liveEnabled: false,
+    sourceEnabled: false,
+    image: undefined,
+  },
+];
+
+const EMAIL = "arnelroy1506@gmail.com";
+
+const SOCIALS: SocialLink[] = [
+  {
+    key: "email",
+    label: "EMAIL",
+    url: `mailto:${EMAIL}`,
+    icon: Mail,
+    isEmail: true,
+  },
+  {
+    key: "github",
+    label: "GITHUB",
+    url: "https://github.com/real-arnel-roy",
+    icon: Github,
+  },
+  {
+    key: "linkedin",
+    label: "LINKEDIN",
+    url: "https://www.linkedin.com/in/arnel-anthony-roy-7a992b2a1/",
+    icon: Linkedin,
+  },
+  {
+    key: "instagram",
+    label: "INSTAGRAM",
+    url: "https://www.instagram.com/arnel_for_real/",
+    icon: Instagram,
+  },
+];
+
+/* -------------------------------- COMPONENT ------------------------------- */
 function Index() {
   const [booted, setBooted] = useState(false);
   const [time, setTime] = useState("");
@@ -378,50 +501,6 @@ function ExpCard({ year, role, org, desc, tags, clearance, idx }: any) {
 }
 
 /* --------------------------------- PROJECTS -------------------------------- */
-const PROJECTS = [
-  {
-    name: "CLYRA",
-    tag: "AI PLATFORM // V1.0",
-    desc: "Interview preparation platform simulating aptitude tests, coding rounds, technical interviews, HR interviews, and viva examinations for diploma students.",
-    tech: ["react", "python", "ai", "supabase", "LLAMA", "next.js"],
-    signal: 9,
-    enc: "OWNER VERIFIED",
-    nodes: 500,
-    span: "md:col-span-2",
-  },
-  {
-    name: "STUDENT DASHBOARD",
-    tag: "CAMPUS HUB // V1.0",
-    desc: "Centralized student platform bringing notes, resources, and academic services into a single mobile application for easier access across campus.",
-    tech: ["flutter", "php", "mysql"],
-    signal: 8,
-    enc: "AUTH VERIFIED",
-    nodes: 1500,
-    span: "",
-  },
-  {
-    name: "DIGITAL_CLOCK \n SCREENSAVER",
-    tag: "TIME NODE // V1.0",
-    desc: "Terminal-inspired fullscreen clock system built for continuous desktop operation. Displays live time with a minimal cyberpunk aesthetic and zero interface clutter.",
-    tech: ["python", "tkinter"],
-    signal: 7,
-    enc: "SYNCED",
-    nodes: 24,
-    span: "",
-  },
-  {
-    name: "VPOES",
-    tag: "SECURE EXAM SYSTEM // V1.0",
-    desc: "Mobile examination platform for internal tests and mock exams with authentication, result management, review systems, and anti-app-switch protection.",
-    tech: ["flutter", "php", "mysql"],
-    signal: 10,
-    enc: "SESSION LOCK",
-    nodes: 1500,
-    span: "md:col-span-2",
-  },
-
-];
-
 function Projects() {
   return (
     <section id="projects" className="relative py-24 px-4 md:px-8 border-b border-white/10">
@@ -436,8 +515,15 @@ function Projects() {
   );
 }
 
-function ProjectCard({ name, tag, desc, tech, signal, enc, nodes, span, idx }: any) {
+function ProjectCard({
+  name, tag, desc, tech, signal, enc, nodes, span,
+  liveEnabled, liveUrl, sourceEnabled, sourceUrl, image, idx,
+}: Project & { idx: number }) {
   const bars = Array.from({ length: 10 }, (_, i) => i < signal);
+  const hasButtons = liveEnabled || sourceEnabled;
+  const [imgError, setImgError] = useState(false);
+  const showImage = !!image && !imgError;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -455,11 +541,20 @@ function ProjectCard({ name, tag, desc, tech, signal, enc, nodes, span, idx }: a
 
       {/* preview area */}
       <div className="relative h-44 border-b border-white/10 overflow-hidden bg-grid">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="font-display font-black uppercase text-[18vw] md:text-7xl text-white/10 tracking-tighter group-hover:text-white/20 transition-colors">
-            {name.split("")[0]}
+        {showImage ? (
+          <img
+            src={image}
+            alt={name}
+            onError={() => setImgError(true)}
+            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="font-display font-black uppercase text-[18vw] md:text-7xl text-white/10 tracking-tighter group-hover:text-white/20 transition-colors">
+              {name.split("")[0]}
+            </div>
           </div>
-        </div>
+        )}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center font-mono text-xs uppercase tracking-[0.3em] text-[#c5ff00]">
           <span className="animate-pulse">[ run module ]</span>
         </div>
@@ -490,19 +585,44 @@ function ProjectCard({ name, tag, desc, tech, signal, enc, nodes, span, idx }: a
         </div>
 
         <div className="mt-3 flex flex-wrap gap-1 font-mono text-[10px] uppercase">
-          {tech.map((t: string) => (
+          {tech.map((t) => (
             <span key={t} className="border border-white/20 px-1.5 py-0.5 text-white/60">{t}</span>
           ))}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-[0.3em]">
-          <button data-hover className="border border-white/40 py-2 hover:bg-white hover:text-black transition-colors">
-            ./live
-          </button>
-          <button data-hover className="border border-white/40 py-2 hover:bg-white hover:text-black transition-colors">
-            ./source
-          </button>
-        </div>
+        {/* conditional action buttons */}
+        {hasButtons && (
+          <div
+            className={`mt-4 grid gap-2 font-mono text-[10px] uppercase tracking-[0.3em] ${
+              liveEnabled && sourceEnabled ? "grid-cols-2" : "grid-cols-1"
+            }`}
+          >
+            {liveEnabled && (
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-hover
+                className="flex items-center justify-center gap-2 border border-white/40 py-2 hover:bg-white hover:text-black transition-colors"
+              >
+                <ExternalLink size={10} />
+                ./live
+              </a>
+            )}
+            {sourceEnabled && (
+              <a
+                href={sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-hover
+                className="flex items-center justify-center gap-2 border border-white/40 py-2 hover:bg-white hover:text-black transition-colors"
+              >
+                <Github size={10} />
+                ./source
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -512,13 +632,16 @@ function ProjectCard({ name, tag, desc, tech, signal, enc, nodes, span, idx }: a
 function Contact() {
   const [msg, setMsg] = useState("");
   const [sent, setSent] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const channels = [
-    { k: "email", v: "arnelroy1506@gmail.com" },
-    { k: "github", v: "https://github.com/real-arnel-roy" },
-    { k: "linkedin", v: "https://www.linkedin.com/in/arnel-anthony-roy-7a992b2a1/" },
-    { k: "instagram", v: "https://www.instagram.com/arnel_for_real/" },
-  ];
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(EMAIL).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <section id="contact" className="relative py-24 px-4 md:px-8">
@@ -534,25 +657,65 @@ function Contact() {
 
         <div className="grid md:grid-cols-2">
           {/* left: channels */}
-          <div className="p-6 border-r border-white/10 space-y-3 font-mono text-sm">
-            <div className="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-2">
+          <div className="p-6 border-r border-white/10 space-y-2 font-mono text-sm">
+            <div className="text-white/40 text-[10px] uppercase tracking-[0.3em] mb-3">
               &gt; available_channels
             </div>
-            {channels.map((c) => (
-              <a
-                key={c.k}
-                href="#"
-                data-hover
-                className="flex items-center justify-between border border-white/15 px-3 py-2 hover:bg-white hover:text-black transition-colors group"
-              >
-                <span className="text-[10px] uppercase tracking-[0.3em] text-white/40 group-hover:text-black">
-                  {c.k}
-                </span>
-                <span className="text-sm">{c.v}</span>
-              </a>
-            ))}
 
-            <div className="mt-6 text-[10px] uppercase tracking-[0.3em] text-white/40 leading-relaxed">
+            {SOCIALS.map((s) => {
+              const Icon = s.icon;
+              const isEmail = s.isEmail;
+              return (
+                <a
+                  key={s.key}
+                  href={s.url}
+                  target={isEmail ? undefined : "_blank"}
+                  rel={isEmail ? undefined : "noopener noreferrer"}
+                  data-hover
+                  className="group flex items-center justify-between border border-white/15 px-3 py-2.5 hover:bg-white hover:text-black transition-colors"
+                >
+                  {/* left: icon + label */}
+                  <span className="flex items-center gap-2.5">
+                    <Icon
+                      size={13}
+                      className="text-white/40 group-hover:text-black transition-colors flex-shrink-0"
+                    />
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-white/40 group-hover:text-black transition-colors">
+                      {s.label}
+                    </span>
+                  </span>
+
+                  {/* right: value + copy button (email only) */}
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs truncate max-w-[160px] md:max-w-[200px]">
+                      {isEmail ? EMAIL : s.url.replace(/^https?:\/\//, "")}
+                    </span>
+                    {isEmail && (
+                      <button
+                        onClick={handleCopyEmail}
+                        data-hover
+                        title="Copy email"
+                        className="flex-shrink-0 flex items-center gap-1 border border-white/30 group-hover:border-black/30 px-1.5 py-0.5 text-[9px] uppercase tracking-wider hover:bg-black/10 transition-colors"
+                      >
+                        {copied ? (
+                          <>
+                            <Check size={8} />
+                            <span>COPIED</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={8} />
+                            <span>COPY</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </span>
+                </a>
+              );
+            })}
+
+            <div className="mt-5 text-[10px] uppercase tracking-[0.3em] text-white/40 leading-relaxed">
               transmissions are logged on the relay
               <br />
               for 72 hours then permanently purged.
