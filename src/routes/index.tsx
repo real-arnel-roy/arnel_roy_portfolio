@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
 import { motion } from "motion/react";
 import { Boot } from "@/components/boot";
 import { Cursor } from "@/components/cursor";
@@ -14,6 +15,11 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+/* ------------------------------ EMAILJS CONFIG ---------------------------- */
+const EJS_SERVICE  = "service_ipampcu";
+const EJS_TEMPLATE = "template_2dd7j7j";
+const EJS_KEY      = "57FIQP16lT0JSGtPL";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,8 +77,9 @@ const PROJECTS: Project[] = [
     nodes: 500,
     span: "md:col-span-2",
     liveEnabled: false,
-    sourceEnabled: false,
-    image: undefined,
+    sourceEnabled: true,
+    sourceUrl: "https://github.com/AradhyaPatil/CLYRA-ai-interview-simulator",
+    image: "/projects/clyra.jpeg",
   },
   {
     name: "STUDENT DASHBOARD",
@@ -85,7 +92,7 @@ const PROJECTS: Project[] = [
     span: "",
     liveEnabled: false,
     sourceEnabled: false,
-    image: undefined,
+    image: "/projects/student_dash.jpeg",
   },
   {
     name: "DIGITAL_CLOCK \n SCREENSAVER",
@@ -96,10 +103,11 @@ const PROJECTS: Project[] = [
     enc: "SYNCED",
     nodes: 24,
     span: "",
-    liveEnabled: false,
+    liveEnabled: true,
+    liveUrl: "https://github.com/real-arnel-roy/digi_clock/releases/tag/V1.0.0",
     sourceEnabled: true,
-    sourceUrl: "https://github.com/real-arnel-roy",
-    image: undefined,
+    sourceUrl: "https://github.com/real-arnel-roy/digi_clock",
+    image: "/projects/digi_clock.jpeg",
   },
   {
     name: "VPOES",
@@ -112,7 +120,7 @@ const PROJECTS: Project[] = [
     span: "md:col-span-2",
     liveEnabled: false,
     sourceEnabled: false,
-    image: undefined,
+    image: "/projects/vpoes2.jpeg",
   },
 ];
 
@@ -630,8 +638,11 @@ function ProjectCard({
 
 /* --------------------------------- CONTACT --------------------------------- */
 function Contact() {
-  const [msg, setMsg] = useState("");
-  const [sent, setSent] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [name, setName]   = useState("");
+  const [email, setEmail] = useState("");
+  const [msg, setMsg]     = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = (e: React.MouseEvent) => {
@@ -642,6 +653,34 @@ function Contact() {
       setTimeout(() => setCopied(false), 2000);
     });
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status === "sending" || status === "sent") return;
+    setStatus("sending");
+    try {
+      await emailjs.send(
+        EJS_SERVICE,
+        EJS_TEMPLATE,
+        { from_name: name, from_email: email, message: msg },
+        { publicKey: EJS_KEY }
+      );
+      setStatus("sent");
+      setName("");
+      setEmail("");
+      setMsg("");
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
+  };
+
+  const btnLabel = {
+    idle:    ">> transmit data",
+    sending: "// transmitting...",
+    sent:    "// transmission complete",
+    error:   "// transmission failed — retry",
+  }[status];
 
   return (
     <section id="contact" className="relative py-24 px-4 md:px-8">
@@ -674,18 +713,12 @@ function Contact() {
                   data-hover
                   className="group flex items-center justify-between border border-white/15 px-3 py-2.5 hover:bg-white hover:text-black transition-colors"
                 >
-                  {/* left: icon + label */}
                   <span className="flex items-center gap-2.5">
-                    <Icon
-                      size={13}
-                      className="text-white/40 group-hover:text-black transition-colors flex-shrink-0"
-                    />
+                    <Icon size={13} className="text-white/40 group-hover:text-black transition-colors flex-shrink-0" />
                     <span className="text-[10px] uppercase tracking-[0.3em] text-white/40 group-hover:text-black transition-colors">
                       {s.label}
                     </span>
                   </span>
-
-                  {/* right: value + copy button (email only) */}
                   <span className="flex items-center gap-2 min-w-0">
                     <span className="text-xs truncate max-w-[160px] md:max-w-[200px]">
                       {isEmail ? EMAIL : s.url.replace(/^https?:\/\//, "")}
@@ -698,15 +731,9 @@ function Contact() {
                         className="flex-shrink-0 flex items-center gap-1 border border-white/30 group-hover:border-black/30 px-1.5 py-0.5 text-[9px] uppercase tracking-wider hover:bg-black/10 transition-colors"
                       >
                         {copied ? (
-                          <>
-                            <Check size={8} />
-                            <span>COPIED</span>
-                          </>
+                          <><Check size={8} /><span>COPIED</span></>
                         ) : (
-                          <>
-                            <Copy size={8} />
-                            <span>COPY</span>
-                          </>
+                          <><Copy size={8} /><span>COPY</span></>
                         )}
                       </button>
                     )}
@@ -724,8 +751,9 @@ function Contact() {
 
           {/* right: form */}
           <form
+            ref={formRef}
             className="p-6 space-y-4 font-mono text-sm"
-            onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+            onSubmit={handleSubmit}
           >
             <div>
               <label className="block text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2">
@@ -733,6 +761,8 @@ function Contact() {
               </label>
               <input
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="codename"
                 className="w-full bg-transparent border border-white/20 px-3 py-2 outline-none focus:border-white"
               />
@@ -744,6 +774,8 @@ function Contact() {
               <input
                 required
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@encrypted.net"
                 className="w-full bg-transparent border border-white/20 px-3 py-2 outline-none focus:border-white"
               />
@@ -764,9 +796,18 @@ function Contact() {
             <button
               data-hover
               type="submit"
-              className="w-full border border-white py-3 uppercase tracking-[0.4em] text-xs hover:bg-white hover:text-black transition-colors"
+              disabled={status === "sending" || status === "sent"}
+              className={`w-full border py-3 uppercase tracking-[0.4em] text-xs transition-colors ${
+                status === "sent"
+                  ? "border-[#c5ff00] text-[#c5ff00] cursor-default"
+                  : status === "error"
+                  ? "border-red-500 text-red-500 cursor-default"
+                  : status === "sending"
+                  ? "border-white/40 text-white/40 cursor-wait"
+                  : "border-white hover:bg-white hover:text-black"
+              }`}
             >
-              {sent ? "// transmission complete" : ">> transmit data"}
+              {btnLabel}
             </button>
           </form>
         </div>
