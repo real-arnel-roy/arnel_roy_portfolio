@@ -122,6 +122,21 @@ const PROJECTS: Project[] = [
     sourceEnabled: false,
     image: "/projects/vpoes2.jpeg",
   },
+  {
+    name: "YT_DOWNLOADER",
+    tag: "MEDIA EXTRACTION SUITE // V1.0",
+    desc: "Desktop YouTube downloader featuring video metadata extraction, audio-only downloads, MP3 conversion via FFmpeg, progress tracking, and a Tkinter-based graphical interface.",
+    tech: ["python", "tkinter", "yt-dlp", "ffmpeg"],
+    signal: 9,
+    enc: "AUDIO PIPELINE",
+    nodes: 1200,
+    span: "md",
+    liveEnabled: true,
+    sourceUrl: "https://github.com/real-arnel-roy/yt_down",
+    sourceEnabled: true,
+    liveUrl: "https://github.com/real-arnel-roy/yt_down/releases/tag/V1.0",
+    image: "",
+  },
 ];
 
 const EMAIL = "arnelroy1506@gmail.com";
